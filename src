@@ -1,0 +1,50 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+int main()
+{
+    ifstream file("graph.txt");
+    if (!file) {
+        cerr << "Error opening file";
+        return 1;
+    }
+    int vertices, edges, src;
+    file >> vertices >> edges;
+
+    vector<vector<int>> adjacencyMatr(vertices);
+    for (int i = 0; i < edges; ++i) {
+        int u, v;
+        file >> u >> v;
+        adjacencyMatr[u].push_back(v);
+        adjacencyMatr[v].push_back(u);
+    }
+
+    file >> src;
+
+    vector<int> dist(vertices, -1);
+    queue<int> q;
+
+    dist[src] = 0;
+    q.push(src);
+
+    while (!q.empty()) {
+        int current = q.front();
+        q.pop();
+        for (int neighbor : adjacencyMatr[current]) {
+            if (dist[neighbor] == -1) {
+                dist[neighbor] = dist[current] + 1;
+                q.push(neighbor);
+            }
+        }
+    }
+
+    for (int i = 0; i < vertices; ++i) {
+        cout << dist[i] << "\n";
+    }
+
+    return 0;
+}
